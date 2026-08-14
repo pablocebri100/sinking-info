@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="referrer" content="no-referrer">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rising Ruby / Sinking Sapphire - Pokédex</title>
+    
+    <!-- CONEXIÓN EXTERNA DEL CSS -->
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+    <!-- CABECERA Y MENÚ STICKY -->
+    <div class="header">
+        <button class="menu-btn" onclick="toggleMenu()" title="Menú">≡</button>
+        <h1>RR / SS Pokédex</h1>
+        <!-- NUEVO BOTÓN DE IDIOMA -->
+        <button id="btn-idioma" onclick="alternarIdioma()" style="background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-left: 15px; transition: 0.3s;">ES / EN</button>
+    </div>
+
+    <nav class="nav-menu" id="menu-principal">
+        <a class="nav-link active" onclick="cambiarSeccion('sec-pokemon', this)">Pokémon</a>
+        <a class="nav-link" onclick="cambiarSeccion('sec-movimientos', this)">Movimientos Modificados</a>
+        <a class="nav-link" onclick="cambiarSeccion('sec-levelcap', this)">Level Cap</a>
+    </nav>
+
+    <div class="contenedor">
+        
+        <!-- SECCIÓN POKÉMON -->
+        <div id="sec-pokemon" class="seccion activa">
+            <div class="info-leyenda">
+                <p id="leyenda-1">Puedes identificar estas nuevas adiciones (y por lo tanto ilegales en los juegos habituales) mediante el sistema de asteriscos.</p>
+                <p id="leyenda-2">Sin asterisco significa que el Pokémon siempre puede aprender este movimiento subiendo de nivel, tener esta habilidad, etc., pero puede ser a un nivel diferente, ser una habilidad oculta, etc.</p>
+                <p id="leyenda-3">Un asterisco (*) significa que el Pokémon puede aprender este movimiento, pero no ordinariamente subiendo de nivel, y lo más probable es que provenga de movimientos huevo, MT/MO o tutores de movimientos. Estos movimientos están disponibles en la versión completa así como en la versión solo legal.</p>
+                <p id="leyenda-4">Dos asteriscos (**) significan que el Pokémon no puede obtener esta habilidad o movimiento de forma ordinaria, siendo completamente ilegal fuera del contexto de este hack</p>
+            </div>
+            
+            <div class="panel-filtros">
+                <div class="buscadores">
+                    <input type="text" id="busc-general" class="buscador-input" placeholder="Buscar Pokémon (ej. Bulbasaur o 001)...">
+                    <input type="text" id="busc-ataque" class="buscador-input" placeholder="Buscar por movimiento (ej. Terremoto)...">
+                </div>
+                <div class="toggles-container">
+                    <label class="toggle-label">
+                        <input type="checkbox" id="filtro-tipo"> <span>Tipo Cambiado</span>
+                    </label>
+                    <label class="toggle-label">
+                        <input type="checkbox" id="filtro-stats"> <span>Estadísticas Cambiadas</span>
+                    </label>
+                    <label class="toggle-label">
+                        <input type="checkbox" id="filtro-habilidad"> <span>Habilidad Cambiada</span>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- CONTENEDOR VACÍO DONDE JS INYECTARÁ LAS TARJETAS -->
+            <div class="grid" id="grid-pokemon">
+                {{TARJETAS_POKEMON}}
+            </div>
+        </div>
+
+        <!-- SECCIÓN MOVIMIENTOS -->
+        <div id="sec-movimientos" class="seccion">
+            <div class="grid" id="grid-movimientos">
+                {{TARJETAS_MOVIMIENTOS}}
+            </div>
+        </div>
+
+        <!-- SECCIÓN LEVEL CAP -->
+        <div id="sec-levelcap" class="seccion">
+            <div class="info-leyenda">
+                <h2>Límites de Nivel (Level Cap)</h2>
+                <p>Niveles máximos permitidos para cada líder de gimnasio o evento importante del juego (extraídos automáticamente de Nuzlocke Tracker).</p>
+            </div>
+            
+            <div class="grid">
+                {{TARJETAS_LEVELCAP}}
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL BUSCADOR PARA COMPARAR -->
+    <div id="modal-buscador-comparador" class="modal-overlay" style="display: none;">
+        <div class="modal-content" style="max-width: 450px;">
+            <span class="btn-cerrar-modal" onclick="cerrarBuscadorComparador()">&times;</span>
+            <div class="modal-header">
+                <h2>🔍 Elige el Pokémon a comparar</h2>
+            </div>
+            <div style="padding: 10px 0;">
+                <input type="text" id="input-buscador-comp" placeholder="Escribe el nombre o número..." oninput="filtrarListaComparador(this.value)" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 1em; box-sizing: border-box;">
+            </div>
+            <div id="lista-opciones-comparador" style="max-height: 350px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+                <!-- Opciones dinámicas -->
+            </div>
+        </div>
+    </div>
+
+    <!-- VENTANA PRINCIPAL DEL COMPARADOR -->
+    <div id="modal-comparador" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <span class="btn-cerrar-modal" onclick="cerrarComparador()">&times;</span>
+            <div class="modal-header">
+                <h2>📊 Comparativa Pokémon</h2>
+            </div>
+            <div class="comparador-grid">
+                <!-- Columnas inyectadas por JS -->
+                <div id="comp-col-1" class="comparador-columna"></div>
+                <div id="comp-col-2" class="comparador-columna"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONEXIÓN EXTERNA DEL JAVASCRIPT (defer asegura que cargue después del HTML) -->
+    <script src="app.js" defer></script>
+</body>
+</html>

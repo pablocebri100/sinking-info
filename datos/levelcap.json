@@ -1,0 +1,218 @@
+[
+    {
+        "nombre_en": "Rival",
+        "nombre_es": "Rival",
+        "ubicacion_en": "Route 103",
+        "ubicacion_es": "Ruta 103",
+        "nivel": 5,
+        "img_url": "https://nuzlocketracker.org/assets/img/leaders/rs-may-oras.webp"
+    },
+    {
+        "nombre_en": "Roxanne",
+        "nombre_es": "Petra",
+        "ubicacion_en": "Rustboro Gym",
+        "ubicacion_es": "Gimnasio Férrico",
+        "nivel": 16,
+        "img_url": "https://nuzlocketracker.org/assets/img/leaders/rs-roxanne-oras.webp"
+    },
+    {
+        "nombre_en": "Brawly",
+        "nombre_es": "Marcial",
+        "ubicacion_en": "Dewford Gym",
+        "ubicacion_es": "Gimnasio Azuliza",
+        "nivel": 19,
+        "img_url": "https://nuzlocketracker.org/assets/img/leaders/rs-brawly-oras.webp"
+    },
+    {
+        "nombre_en": "Rival",
+        "nombre_es": "Rival",
+        "ubicacion_en": "Route 110",
+        "ubicacion_es": "Ruta 110",
+        "nivel": 24,
+        "img_url": "https://nuzlocketracker.org/assets/img/leaders/rs-may-oras.webp"
+    },
+    {
+        "nombre_en": "Wally",
+        "nombre_es": "Blasco",
+        "ubicacion_en": "Mauville City",
+        "ubicacion_es": "Ciudad Malvavilla/Ciudad Malvalona",
+        "nivel": 25,
+        "img_url": "https://nuzlocketracker.org/assets/img/leaders/rs-wally-oras.webp"
+    },
+    {
+        "nombre_en": "Wattson",
+        "nombre_es": "Wattson",
+        "ubicacion_en": "Mauville Gym",
+        "ubicacion_es": "Gimnasio Malvalona",
+        "nivel": 28,
+        "img_url": "https://nuzlocketracker.org/assets/img/leaders/rs-wattson-oras.webp"
+    },
+    {
+        "nombre_en": "Shelly & Grunt",
+        "nombre_es": "Silvina y Recluta",
+        "ubicacion_en": "Meteor Falls",
+        "ubicacion_es": "Cascada Meteoro",
+        "nivel": 35,
+        "img_url": "https://nuzlocketracker.org/assets/img/leaders/rs-shelly-oras.webp"
+    },
+    {
+        "nombre_en": "Shelly",
+        "nombre_es": "Silvina",
+        "ubicacion_en": "Mt. Chimney",
+        "ubicacion_es": "Monte Cenizo",
+        "nivel": 35,
+        "img_url": "https://nuzlocketracker.org/assets/img/leaders/rs-shelly-oras.webp"
+    },
+    {
+        "nombre_en": "Archie",
+        "nombre_es": "Aquiles",
+        "ubicacion_en": "Mt. Chimney",
+        "ubicacion_es": "Monte Cenizo",
+        "nivel": 36,
+        "img_url": "https://nuzlocketracker.org/assets/img/leaders/rs-archie-oras.webp"
+    },
+    {
+        "nombre_en": "Flannery",
+        "nombre_es": "Candela",
+        "ubicacion_en": "Lavaridge Gym",
+        "ubicacion_es": "Gimnasio Lavacalda",
+        "nivel": 38,
+        "img_url": "https://nuzlocketracker.org/assets/img/leaders/rs-flannery-oras.webp"
+    },
+    {
+        "nombre_en": "Norman",
+        "nombre_es": "Norman",
+        "ubicacion_en": "Petalburg Gym",
+        "ubicacion_es": "Gimnasio Petalia",
+        "nivel": 42,
+        "img_url": "https://nuzlocketracker.org/assets/img/leaders/rs-norman-oras.webp"
+    },
+    {
+        "nombre_en": "Matt & Grunt",
+        "nombre_es": "Matias y Recluta",
+        "ubicacion_en": "Southern Island",
+        "ubicacion_es": "Southern Island",
+        "nivel": 44,
+        "img_url": "https://nuzlocketracker.org/assets/img/leaders/rs-matt-oras.webp"
+    },
+    {
+        "nombre_en": "Shelly",
+        "nombre_es": "Silvina",
+        "ubicacion_en": "Weather Institute",
+        "ubicacion_es": "Instituto Meteorológico",
+        "nivel": 48,
+        "img_url": "https://nuzlocketracker.org/assets/img/leaders/rs-shelly-oras.webp"
+    },
+    {
+        "nombre_en": "Rival",
+        "nombre_es": "Rival",
+        "ubicacion_en": "Route 119",
+        "ubicacion_es": "Ruta 119",
+        "nivel": 49,
+        "img_url": "https://nuzlocketracker.org/assets/img/leaders/rs-may-oras.webp"
+    },
+    {
+        "nombre_en": "Winona",
+        "nombre_es": "Alana",
+        "ubicacion_en": "Fortree Gym",
+        "ubicacion_es": "Gimnasio Arborada",
+        "nivel": 50,
+        "img_url": "https://nuzlocketracker.org/assets/img/leaders/rs-winona-oras.webp"
+    },
+    {
+        "nombre_en": "Rival",
+        "nombre_es": "Rival",
+        "ubicacion_en": "Lilycove City",
+        "ubicacion_es": "Ciudad Calagua",
+        "nivel": 55,
+        "img_url": "https://nuzlocketracker.org/assets/img/leaders/rs-may-oras.webp"
+    },
+    {
+        "nombre_en": "Matt",
+        "nombre_es": "Matías",
+        "ubicacion_en": "Mt. Pyre Summit",
+        "ubicacion_es": "Mt. Pyre Summit",
+        "nivel": 55,
+        "img_url": "https://nuzlocketracker.org/assets/img/leaders/rs-matt-oras.webp"
+    },
+    {
+        "nombre_en": "Matt",
+        "nombre_es": "Matías",
+        "ubicacion_en": "Magma Hideout B1F",
+        "ubicacion_es": "Magma Hideout B1F",
+        "nivel": 57,
+        "img_url": "https://nuzlocketracker.org/assets/img/leaders/rs-matt-oras.webp"
+    },
+    {
+        "nombre_en": "Tate & Liza",
+        "nombre_es": "Vito y Leti",
+        "ubicacion_en": "Mossdeep Gym",
+        "ubicacion_es": "Gimnasio Algaria",
+        "nivel": 62,
+        "img_url": "https://nuzlocketracker.org/assets/img/leaders/rs-tate-liza-oras.webp"
+    },
+    {
+        "nombre_en": "Archie",
+        "nombre_es": "Aquiles",
+        "ubicacion_en": "Seafloor Cavern",
+        "ubicacion_es": "Caverna Abisal",
+        "nivel": 65,
+        "img_url": "https://nuzlocketracker.org/assets/img/leaders/rs-archie-oras.webp"
+    },
+    {
+        "nombre_en": "Wallace",
+        "nombre_es": "Plubio",
+        "ubicacion_en": "Sootopolis Gym",
+        "ubicacion_es": "Gimnasio Arrecípolis",
+        "nivel": 67,
+        "img_url": "https://nuzlocketracker.org/assets/img/leaders/rs-wallace-oras.webp"
+    },
+    {
+        "nombre_en": "Wally",
+        "nombre_es": "Blasco",
+        "ubicacion_en": "Victory Road",
+        "ubicacion_es": "Calle Victoria",
+        "nivel": 72,
+        "img_url": "https://nuzlocketracker.org/assets/img/leaders/rs-wally-oras.webp"
+    },
+    {
+        "nombre_en": "Sidney",
+        "nombre_es": "Sixto",
+        "ubicacion_en": "Pokémon League",
+        "ubicacion_es": "Liga Pokémon",
+        "nivel": 72,
+        "img_url": "https://nuzlocketracker.org/assets/img/leaders/rs-sidney-oras.webp"
+    },
+    {
+        "nombre_en": "Phoebe",
+        "nombre_es": "Fátima",
+        "ubicacion_en": "Pokémon League",
+        "ubicacion_es": "Liga Pokémon",
+        "nivel": 73,
+        "img_url": "https://nuzlocketracker.org/assets/img/leaders/rs-phoebe-oras.webp"
+    },
+    {
+        "nombre_en": "Glacia",
+        "nombre_es": "Nívea",
+        "ubicacion_en": "Pokémon League",
+        "ubicacion_es": "Liga Pokémon",
+        "nivel": 74,
+        "img_url": "https://nuzlocketracker.org/assets/img/leaders/rs-glacia-oras.webp"
+    },
+    {
+        "nombre_en": "Drake",
+        "nombre_es": "Dracón",
+        "ubicacion_en": "Pokémon League",
+        "ubicacion_es": "Liga Pokémon",
+        "nivel": 75,
+        "img_url": "https://nuzlocketracker.org/assets/img/leaders/rs-drake-oras.webp"
+    },
+    {
+        "nombre_en": "Steven",
+        "nombre_es": "Steven Stone/Máximo Peñas",
+        "ubicacion_en": "Pokémon Champion",
+        "ubicacion_es": "Pokémon Champion",
+        "nivel": 79,
+        "img_url": "https://nuzlocketracker.org/assets/img/leaders/rs-steven-oras.webp"
+    }
+]
