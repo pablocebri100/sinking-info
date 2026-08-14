@@ -23,6 +23,7 @@
         <a class="nav-link active" onclick="cambiarSeccion('sec-pokemon', this)">Pokémon</a>
         <a class="nav-link" onclick="cambiarSeccion('sec-movimientos', this)">Movimientos Modificados</a>
         <a class="nav-link" onclick="cambiarSeccion('sec-levelcap', this)">Level Cap</a>
+        <a href="#" class="nav-link" id="nav-ruleta" onclick="cambiarSeccion('sec-ruleta', this)">🎲 Ruleta Dualocke</a>
     </nav>
 
     <div class="contenedor">
@@ -76,6 +77,51 @@
             
             <div class="grid">
                 {{TARJETAS_LEVELCAP}}
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN RULETA DUALOCKE VISUAL -->
+    <div id="sec-ruleta" class="seccion">
+        <div class="ruleta-container">
+            <h2 id="titulo-ruleta">🎲 Ruleta Dualocke</h2>
+            <p id="desc-ruleta" style="margin-bottom: 20px; color: #666;">Selecciona quién va a tirar de la ruleta para cargar los premios correspondientes.</p>
+            
+            <div>
+                <button class="btn-ruleta btn-quique" id="btn-ruleta-quique" onclick="tirarRuletaVisual('quique')">Tirar Ruleta (Quique)</button>
+                <button class="btn-ruleta btn-pablo" id="btn-ruleta-pablo" onclick="tirarRuletaVisual('pablo')">Tirar Ruleta (Pablo)</button>
+            </div>
+            
+            <div style="margin-top: 15px;">
+                <button onclick="abrirEditorRuleta()" style="background: #475569; color: white; padding: 8px 15px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; font-size: 0.9em; transition: 0.2s;" onmouseover="this.style.background='#334155'" onmouseout="this.style.background='#475569'">⚙️ Editar Premios</button>
+            </div>
+
+            <!-- Rueda visual -->
+            <div class="ruleta-visual-container">
+                <div class="ruleta-puntero"></div>
+                <div id="ruleta-rueda" class="ruleta-rueda"></div>
+                <div class="ruleta-centro"></div>
+            </div>
+
+            <div id="resultado-ruleta" class="ruleta-resultado" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- MODAL EDITOR RULETA -->
+    <div id="modal-editor-ruleta" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(3px);">
+        <div style="background: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 650px; max-height: 85vh; display: flex; flex-direction: column;">
+            <h2 style="margin-top: 0;">⚙️ Personalizar Premios</h2>
+            <p style="color: #666; margin-bottom: 20px; font-size: 0.9em;">Los cambios se guardarán en tu navegador. El premio especial de Charmander se añadirá automáticamente cuando tire Quique.</p>
+            
+            <!-- Contenedor scrolleable de los inputs -->
+            <div id="lista-editor-premios" style="overflow-y: auto; flex-grow: 1; padding-right: 10px; margin-bottom: 20px;"></div>
+            
+            <div style="display: flex; justify-content: space-between; border-top: 2px solid #eee; padding-top: 20px;">
+                <button onclick="agregarFilaEditor()" style="background: #4FE09B; color: #1e293b; padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">➕ Añadir Premio</button>
+                <div>
+                    <button onclick="cerrarEditorRuleta()" style="background: #cbd5e1; color: #333; padding: 10px 15px; border: none; border-radius: 6px; margin-right: 10px; cursor: pointer;">Cancelar</button>
+                    <button onclick="guardarEditorRuleta()" style="background: #0066cc; color: white; padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">💾 Guardar</button>
+                </div>
             </div>
         </div>
     </div>

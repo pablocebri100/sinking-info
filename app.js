@@ -1,6 +1,9 @@
 // ==========================================
 // 1. DICCIONARIO DE INTERNACIONALIZACIÓN (i18n)
 // ==========================================
+// ==========================================
+// 1. DICCIONARIO DE INTERNACIONALIZACIÓN (i18n)
+// ==========================================
 const DICCIONARIO = {
     es: {
         buscGeneral: "Buscar Pokémon (ej. Bulbasaur o 001)...",
@@ -17,7 +20,24 @@ const DICCIONARIO = {
         leyenda3: "Un asterisco (*) significa que el Pokémon puede aprender este movimiento, pero no ordinariamente subiendo de nivel, y lo más probable es que provenga de movimientos huevo, MT/MO o tutores de movimientos. Estos movimientos están disponibles en la versión completa así como en la versión solo legal.",
         leyenda4: "Dos asteriscos (**) significan que el Pokémon no puede obtener esta habilidad o movimiento de forma ordinaria, siendo completamente ilegal fuera del contexto de este hack.",
         movStats: { type: "Tipo", power: "Potencia", accuracy: "Precisión", pp: "PP", effect: "Efecto", absorb: "Absorción" },
-        lvlMax: "Nivel Máximo:" // <-- Etiqueta inyectada correctamente
+        lvlMax: "Nivel Máximo:",
+        // NUEVO: UI de la Ruleta
+        ruletaMenu: "🎲 Ruleta Dualocke",
+        ruletaTitle: "🎲 Ruleta Dualocke",
+        ruletaDesc: "Selecciona quién va a tirar de la ruleta para cargar los premios correspondientes.",
+        btnQuique: "Tirar Ruleta (Quique)",
+        btnPablo: "Tirar Ruleta (Pablo)",
+        ruletaPlaceholder: "El resultado aparecerá aquí...",
+        // NUEVO: Premios
+        premiosBase: [
+            { titulo: "Captura libre", desc: "Podrá atrapar un Pokémon en cualquier ruta a elección, respetando la norma de capturar únicamente el primer Pokémon que aparezca." },
+            { titulo: "Castigo al perdedor", desc: "El GANADOR podrá elegir diez Pokémon del PERDEDOR (incluyendo los de la caja 'Muertos'). El PERDEDOR podrá indultar a un Pokémon. Si no dispone de diez, se realizará con todos menos el indultado. Si solo tiene uno, se anula." },
+            { titulo: "Revivir un Pokémon", desc: "El GANADOR podrá revivir un Pokémon de la caja 'Muertos'. En caso de no tener ninguno, podrá comprar 2 Restaurar Todo." },
+            { titulo: "Pérdida de ruleta", desc: "Perderás las recompensas y la tirada pasará a jugarla tu hermano. Si vuelve a salir, seguirá pasando de un hermano a otro hasta que salga otra opción o se rechace tirar." },
+            { titulo: "3 Restaurar todos", desc: "El GANADOR obtendrá tres objetos 'Restaurar todo'." },
+            { titulo: "Objeto cualquiera a elegir", desc: "El GANADOR podrá elegir un objeto cualquiera (Excepto Rocío bondad. La lista de excepciones podrá ampliarse o reducirse por acuerdo mutuo)." }
+        ],
+        premioCharmander: { titulo: "Premio especial de Charmander", desc: "Esta opción especial ha sido elegida. Quique obtiene un Charmander." }
     },
     en: {
         buscGeneral: "Search Pokémon (e.g., Bulbasaur or 001)...",
@@ -34,7 +54,24 @@ const DICCIONARIO = {
         leyenda3: "One asterisk (*): The Pokémon can learn this move, but not through normal leveling. It is most likely obtained via egg moves, TMs/HMs, or move tutors. These moves are available in both the full and legal-only versions.",
         leyenda4: "Two asterisks (**): The Pokémon cannot normally obtain this ability or move. It is completely illegal outside the context of this hack.",
         movStats: { type: "Type", power: "Power", accuracy: "Accuracy", pp: "PP", effect: "Effect", absorb: "Absorb %" },
-        lvlMax: "Max Level:" // <-- Etiqueta inyectada correctamente
+        lvlMax: "Max Level:",
+        // NUEVO: UI de la Ruleta
+        ruletaMenu: "🎲 Dualocke Roulette",
+        ruletaTitle: "🎲 Dualocke Roulette",
+        ruletaDesc: "Select who is spinning the roulette to load the corresponding prizes.",
+        btnQuique: "Spin Roulette (Quique)",
+        btnPablo: "Spin Roulette (Pablo)",
+        ruletaPlaceholder: "The result will appear here...",
+        // NUEVO: Premios
+        premiosBase: [
+            { titulo: "Free Capture", desc: "You may catch a Pokémon on any route of your choice, respecting the rule of catching only the first Pokémon that appears." },
+            { titulo: "Loser's Punishment", desc: "The WINNER may choose ten Pokémon from the LOSER (including the 'Dead' box). The LOSER may pardon one Pokémon. If they don't have ten, it applies to all minus the pardoned one. If only one remains, it is annulled." },
+            { titulo: "Revive a Pokémon", desc: "The WINNER may revive one Pokémon from the 'Dead' box. If there are none, they may buy 2 Full Restores." },
+            { titulo: "Loss of Roulette", desc: "You lose the rewards and the spin passes to your brother. If it lands again, it passes back and forth until another option is selected or declined." },
+            { titulo: "3 Full Restores", desc: "The WINNER receives three 'Full Restore' items." },
+            { titulo: "Any Item of Choice", desc: "The WINNER may choose any item (Except Soul Dew. Exceptions can be modified by mutual agreement)." }
+        ],
+        premioCharmander: { titulo: "Charmander Special Prize", desc: "This special option has been drawn. Quique receives a Charmander." }
     }
 };
 
@@ -137,6 +174,7 @@ async function inicializarPokedex() {
         renderizarMovimientosModificados();
         vincularEventosFiltros();
         renderizarLevelCap();
+        dibujarRuletaVisual(jugadorActualRuleta);
 
     } catch (error) {
         console.error("Error al cargar datos:", error);
@@ -538,6 +576,27 @@ async function alternarIdioma() {
     document.getElementById('leyenda-2').textContent = dict.leyenda2;
     document.getElementById('leyenda-3').textContent = dict.leyenda3;
     document.getElementById('leyenda-4').textContent = dict.leyenda4;
+
+    // Traducción de la UI de la Ruleta
+    const navRuleta = document.getElementById('nav-ruleta');
+    if(navRuleta) navRuleta.textContent = dict.ruletaMenu;
+    
+    const tituloRul = document.getElementById('titulo-ruleta');
+    if(tituloRul) tituloRul.textContent = dict.ruletaTitle;
+    
+    const descRul = document.getElementById('desc-ruleta');
+    if(descRul) descRul.textContent = dict.ruletaDesc;
+    
+    const btnQui = document.getElementById('btn-ruleta-quique');
+    if(btnQui) btnQui.textContent = dict.btnQuique;
+    
+    const btnPab = document.getElementById('btn-ruleta-pablo');
+    if(btnPab) btnPab.textContent = dict.btnPablo;
+    
+    // Resetea la caja si no está mostrando un premio final
+    if (!ruletaAnimando && document.getElementById('placeholder-ruleta')) {
+        document.getElementById('placeholder-ruleta').textContent = dict.ruletaPlaceholder;
+    }
     
     const btn = document.getElementById('btn-idioma');
     btn.textContent = idiomaActual === 'es' ? 'ES / EN' : 'EN / ES';
@@ -546,6 +605,7 @@ async function alternarIdioma() {
     aplicarFiltros(); 
     renderizarMovimientosModificados();
     renderizarLevelCap();
+    dibujarRuletaVisual(jugadorActualRuleta);
 }
 
 
@@ -647,4 +707,161 @@ function renderizarLevelCap() {
     });
 
     contenedor.innerHTML = html;
+}
+
+// ==========================================
+// 12. LÓGICA DE LA RULETA VISUAL Y EDITOR
+// ==========================================
+let ruletaAnimando = false;
+let rotacionActualRuleta = 0;
+let jugadorActualRuleta = 'quique'; 
+const COLORES_RULETA = ['#e3350d', '#0066cc', '#f7d358', '#4FE09B', '#9b59b6', '#e67e22', '#34495e'];
+
+// Obtiene los premios (desde localStorage si los editaste, o del diccionario por defecto)
+function obtenerPremiosBase() {
+    const guardados = localStorage.getItem('premiosDualocke');
+    if (guardados) {
+        try { return JSON.parse(guardados); } catch (e) { console.error("Error leyendo premios", e); }
+    }
+    return [...DICCIONARIO[idiomaActual].premiosBase];
+}
+
+// Construye la rueda dinámicamente
+function dibujarRuletaVisual(jugador) {
+    const dict = DICCIONARIO[idiomaActual];
+    let premios = obtenerPremiosBase();
+    
+    // La regla de Charmander se mantiene intacta para Quique
+    if (jugador === 'quique') premios.push(dict.premioCharmander);
+
+    const rueda = document.getElementById('ruleta-rueda');
+    if (!rueda) return { numPremios: 0 };
+    
+    rueda.innerHTML = ''; 
+    const numPremios = premios.length;
+    if (numPremios === 0) return { numPremios: 0 };
+
+    const angulo = 360 / numPremios;
+    let conicString = '';
+
+    for (let i = 0; i < numPremios; i++) {
+        const inicio = i * angulo;
+        const fin = (i + 1) * angulo;
+        const color = COLORES_RULETA[i % COLORES_RULETA.length];
+        
+        conicString += `${color} ${inicio}deg ${fin}deg${i === numPremios - 1 ? '' : ', '}`;
+
+        const divTexto = document.createElement('div');
+        divTexto.className = 'ruleta-texto';
+        const offsetGiro = inicio + (angulo / 2);
+        divTexto.style.transform = `rotate(${offsetGiro - 90}deg)`;
+        
+        let textoMostrar = premios[i].titulo;
+        if(textoMostrar.length > 22) textoMostrar = textoMostrar.substring(0, 20) + '...';
+        
+        divTexto.textContent = textoMostrar;
+        rueda.appendChild(divTexto);
+    }
+    
+    rueda.style.background = `conic-gradient(${conicString})`;
+    return { premios, numPremios, angulo };
+}
+
+// Animación de giro
+function tirarRuletaVisual(jugador) {
+    if (ruletaAnimando) return;
+    ruletaAnimando = true;
+
+    const cajaResultado = document.getElementById('resultado-ruleta');
+    cajaResultado.style.display = 'none'; 
+
+    if (jugador !== jugadorActualRuleta) {
+        jugadorActualRuleta = jugador;
+        rotacionActualRuleta = 0; 
+        const rueda = document.getElementById('ruleta-rueda');
+        rueda.style.transition = 'none';
+        rueda.style.transform = `rotate(0deg)`;
+        void rueda.offsetWidth; 
+    }
+
+    const config = dibujarRuletaVisual(jugador);
+    if (config.numPremios === 0) {
+        ruletaAnimando = false;
+        alert("¡No hay premios en la ruleta! Añade alguno desde el editor.");
+        return;
+    }
+    
+    const indexPremio = Math.floor(Math.random() * config.numPremios);
+    const anguloCentro = (indexPremio * config.angulo) + (config.angulo / 2);
+    const rotacionObjetivo = 360 - anguloCentro;
+    const vueltasExtra = 360 * 6;
+    
+    rotacionActualRuleta += vueltasExtra + rotacionObjetivo - (rotacionActualRuleta % 360);
+
+    const rueda = document.getElementById('ruleta-rueda');
+    rueda.style.transition = 'transform 4s cubic-bezier(0.15, 0.85, 0.15, 1)';
+    rueda.style.transform = `rotate(${rotacionActualRuleta}deg)`;
+
+    setTimeout(() => {
+        const premioElegido = config.premios[indexPremio];
+        cajaResultado.innerHTML = `
+            <h3 style="color: #1e293b; font-size: 2em; margin-bottom: 10px; text-transform: uppercase;">🎉 ${premioElegido.titulo} 🎉</h3>
+            <p class="ruleta-desc">${premioElegido.desc}</p>
+        `;
+        cajaResultado.style.display = 'flex';
+        ruletaAnimando = false;
+    }, 4000);
+}
+
+// --- SISTEMA DE EDICIÓN ---
+function abrirEditorRuleta() {
+    const premiosActuales = obtenerPremiosBase();
+    const contenedor = document.getElementById('lista-editor-premios');
+    contenedor.innerHTML = '';
+    
+    premiosActuales.forEach((premio, index) => {
+        contenedor.insertAdjacentHTML('beforeend', generarHtmlFilaEditor(premio.titulo, premio.desc, index));
+    });
+    
+    document.getElementById('modal-editor-ruleta').style.display = 'flex';
+}
+
+function generarHtmlFilaEditor(titulo = '', desc = '', index = Date.now()) {
+    return `
+        <div class="editor-fila" id="fila-premio-${index}">
+            <div class="editor-inputs">
+                <input type="text" class="editor-input-titulo" placeholder="Título del premio" value="${titulo.replace(/"/g, '&quot;')}">
+                <textarea class="editor-input-desc" placeholder="Descripción de las reglas...">${desc}</textarea>
+            </div>
+            <button class="btn-eliminar-premio" onclick="this.closest('.editor-fila').remove()" title="Eliminar premio">🗑️</button>
+        </div>
+    `;
+}
+
+function agregarFilaEditor() {
+    document.getElementById('lista-editor-premios').insertAdjacentHTML('beforeend', generarHtmlFilaEditor());
+}
+
+function cerrarEditorRuleta() {
+    document.getElementById('modal-editor-ruleta').style.display = 'none';
+}
+
+function guardarEditorRuleta() {
+    const filas = document.querySelectorAll('.editor-fila');
+    const nuevosPremios = [];
+    
+    filas.forEach(fila => {
+        const titulo = fila.querySelector('.editor-input-titulo').value.trim();
+        const desc = fila.querySelector('.editor-input-desc').value.trim();
+        if (titulo !== '') {
+            nuevosPremios.push({ titulo, desc });
+        }
+    });
+
+    // Guardamos en el navegador
+    localStorage.setItem('premiosDualocke', JSON.stringify(nuevosPremios));
+    
+    // Repintamos y cerramos
+    dibujarRuletaVisual(jugadorActualRuleta);
+    cerrarEditorRuleta();
 }

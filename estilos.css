@@ -85,6 +85,193 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-
 .comparador-grid { display: flex; gap: 20px; justify-content: space-between; }
 .comparador-columna { flex: 1; background: #fcfcfc; border: 2px dashed #ccc; border-radius: 10px; padding: 15px; min-height: 300px; }
 
+/* ==========================================
+   ESTILOS DE LA RULETA DUALOCKE VISUAL
+   ========================================== */
+.ruleta-container {
+    text-align: center;
+    padding: 40px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    margin: 20px auto;
+    max-width: 800px;
+    border: 1px solid #e2e8f0;
+}
+
+.btn-ruleta {
+    padding: 15px 25px;
+    font-size: 1.1em;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 10px;
+    transition: all 0.2s ease;
+    color: white;
+}
+
+.btn-quique { background: #e3350d; }
+.btn-pablo { background: #0066cc; }
+
+.btn-ruleta:hover { 
+    filter: brightness(1.1); 
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* Contenedor del Círculo */
+.ruleta-visual-container {
+    position: relative;
+    width: 350px;
+    height: 350px;
+    margin: 40px auto;
+    border-radius: 50%;
+    padding: 8px;
+    background: #cbd5e1;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+}
+
+/* El Triángulo que marca el premio */
+.ruleta-puntero {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0; 
+    height: 0; 
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-top: 35px solid #1e293b;
+    z-index: 10;
+    filter: drop-shadow(0 4px 4px rgba(0,0,0,0.3));
+}
+
+/* La Rueda que Gira */
+.ruleta-rueda {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    /* La transición dicta la curva de frenado suave */
+    transition: transform 4s cubic-bezier(0.15, 0.85, 0.15, 1);
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+/* Pívot central blanco */
+.ruleta-centro {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    background: #fff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+/* El texto dentro de los quesitos */
+.ruleta-texto {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 50%; /* Ocupa el radio derecho */
+    height: 30px;
+    transform-origin: 0% 50%; /* Pivota desde el centro exacto */
+    text-align: left;
+    padding-left: 35px; /* Empuja el texto hacia afuera del centro */
+    box-sizing: border-box;
+    font-size: 0.8em;
+    font-weight: 700;
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+    margin-top: -15px; /* Centrado vertical absoluto */
+    line-height: 30px;
+    white-space: nowrap;
+}
+
+.ruleta-resultado {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    padding: 25px;
+    border: 3px solid #4FE09B;
+    border-radius: 12px;
+    background: #f0fdf4;
+    animation: aparecer 0.5s ease-out;
+}
+
+.ruleta-desc {
+    font-size: 1.1em;
+    color: #475569;
+    font-weight: normal;
+    margin-top: 15px;
+    line-height: 1.5;
+}
+
+@keyframes aparecer {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* Estilos para el Editor de la Ruleta */
+.editor-fila {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    background: #f8fafc;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    align-items: flex-start;
+}
+.editor-inputs {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.editor-input-titulo {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    font-weight: bold;
+    font-family: inherit;
+}
+.editor-input-desc {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 60px;
+}
+.btn-eliminar-premio {
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    width: 35px;
+    height: 35px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.btn-eliminar-premio:hover { background: #dc2626; }
+
+/*FINAL CSS RULETA*/
+
 @media (max-width: 768px) {
     .buscadores { flex-direction: column; }
     .nav-menu { width: 100%; }
