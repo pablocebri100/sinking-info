@@ -1,6 +1,4 @@
-// ==========================================
-// 1. DICCIONARIO DE INTERNACIONALIZACIÓN (i18n)
-// ==========================================
+
 // ==========================================
 // 1. DICCIONARIO DE INTERNACIONALIZACIÓN (i18n)
 // ==========================================
@@ -139,12 +137,12 @@ async function inicializarPokedex() {
         `;
 
         const [resPokedex, resLearnsets, resStats, resTrad, resMovsMod, resLevelCap] = await Promise.all([
-            fetch('../datos/pokedex_sinking.json').catch(() => ({ json: () => ({}) })),
-            fetch('../datos/learnsets_sinking.json').catch(() => ({ json: () => ({}) })),
-            fetch('../datos/stats_modificadas.json').catch(() => ({ json: () => ({}) })),
-            fetch('../datos/traducciones_cache.json').catch(() => ({ json: () => ({}) })),
-            fetch('../datos/movimientos_modificados.json').catch(() => ({ json: () => ({}) })),
-            fetch('../datos/levelcap.json').catch(() => ({ json: () => ({}) })) // <-- NUEVO
+            fetch('/datos/pokedex_sinking.json').catch(() => ({ json: () => ({}) })),
+            fetch('/datos/learnsets_sinking.json').catch(() => ({ json: () => ({}) })),
+            fetch('/datos/stats_modificadas.json').catch(() => ({ json: () => ({}) })),
+            fetch('/datos/traducciones_cache.json').catch(() => ({ json: () => ({}) })),
+            fetch('/datos/movimientos_modificados.json').catch(() => ({ json: () => ({}) })),
+            fetch('/datos/levelcap.json').catch(() => ({ json: () => ({}) })) // <-- NUEVO
         ]);
         
         levelCapDatos = await resLevelCap.json();
@@ -630,7 +628,7 @@ async function alternarIdioma() {
     
     if (idiomaActual === 'en' && Object.keys(learnsetsEN).length === 0) {
         try {
-            const res = await fetch('../datos/learnsets_sinking_en.json');
+            const res = await fetch('/datos/learnsets_sinking_en.json');
             learnsetsEN = await res.json();
         } catch (e) {
             console.error("No se pudo cargar el JSON en inglés.");
