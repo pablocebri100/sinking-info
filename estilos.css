@@ -85,6 +85,8 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-
 .comparador-grid { display: flex; gap: 20px; justify-content: space-between; }
 .comparador-columna { flex: 1; background: #fcfcfc; border: 2px dashed #ccc; border-radius: 10px; padding: 15px; min-height: 300px; }
 
+
+
 /* ==========================================
    ESTILOS DE LA RULETA DUALOCKE VISUAL
    ========================================== */
