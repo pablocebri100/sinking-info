@@ -8,6 +8,7 @@ const DICCIONARIO = {
     es: {
         buscGeneral: "Buscar Pokémon (ej. Bulbasaur o 001)...",
         buscAtaque: "Buscar por movimiento (ej. Terremoto)...",
+        buscHab: "Buscar por habilidad (ej. Intimidación)...",
         lblTipo: "Tipo Cambiado",
         lblStats: "Estadísticas Cambiadas",
         lblHab: "Habilidad Cambiada",
@@ -42,6 +43,7 @@ const DICCIONARIO = {
     en: {
         buscGeneral: "Search Pokémon (e.g., Bulbasaur or 001)...",
         buscAtaque: "Search by move (e.g., Earthquake)...",
+        buscHab: "Search by ability (e.g., Intimidate)...",
         lblTipo: "Type Changed",
         lblStats: "Stats Changed",
         lblHab: "Ability Changed",
@@ -137,12 +139,12 @@ async function inicializarPokedex() {
         `;
 
         const [resPokedex, resLearnsets, resStats, resTrad, resMovsMod, resLevelCap] = await Promise.all([
-            fetch('datos/pokedex_sinking.json').catch(() => ({ json: () => ({}) })),
-            fetch('datos/learnsets_sinking.json').catch(() => ({ json: () => ({}) })),
-            fetch('datos/stats_modificadas.json').catch(() => ({ json: () => ({}) })),
-            fetch('datos/traducciones_cache.json').catch(() => ({ json: () => ({}) })),
-            fetch('datos/movimientos_modificados.json').catch(() => ({ json: () => ({}) })),
-            fetch('datos/levelcap.json').catch(() => ({ json: () => ({}) })) // <-- NUEVO
+            fetch('../datos/pokedex_sinking.json').catch(() => ({ json: () => ({}) })),
+            fetch('../datos/learnsets_sinking.json').catch(() => ({ json: () => ({}) })),
+            fetch('../datos/stats_modificadas.json').catch(() => ({ json: () => ({}) })),
+            fetch('../datos/traducciones_cache.json').catch(() => ({ json: () => ({}) })),
+            fetch('../datos/movimientos_modificados.json').catch(() => ({ json: () => ({}) })),
+            fetch('../datos/levelcap.json').catch(() => ({ json: () => ({}) })) // <-- NUEVO
         ]);
         
         levelCapDatos = await resLevelCap.json();
@@ -250,31 +252,52 @@ function generarHTMLMovimientos(idStr) {
     return html;
 }
 
-function generarHTMLTarjeta(pkmn) {
+function generarHTMLTarjeta(pkmn, megaIndex = -1) {
     const dict = DICCIONARIO[idiomaActual];
     const idStr = pkmn.id_str.padStart(3, '0');
-    const nombre = pkmn.nombre || (pkmn.nombre_interno ? pkmn.nombre_interno.toUpperCase() : "Desconocido");
-    const tipos = pkmn.tipos || [];
-    const stats = pkmn.estadisticas || { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
+    
+    // Extraer datos base o datos de la Mega
+    const esMega = megaIndex >= 0;
+    const datosActivos = esMega ? pkmn.megas[megaIndex] : pkmn;
+    
+    const nombre = datosActivos.nombre || (datosActivos.nombre_interno ? datosActivos.nombre_interno.toUpperCase() : "Desconocido");
+    const tipos = datosActivos.tipos || [];
+    const stats = datosActivos.estadisticas || { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
+    const habs = datosActivos.habilidades || [];
     const totalStats = Object.values(stats).reduce((a, b) => a + b, 0);
+    
+    const imgSrc = esMega 
+        ? datosActivos.img_url 
+        : `https://pokefanaticos.com/pokedex/assets/images/pokemon_iconos/${pkmn.id_num}.png`;
+
+    // Selector de Megaevolución
+    let htmlMegas = '';
+    if (pkmn.megas && pkmn.megas.length > 0) {
+        htmlMegas = `
+            <select onchange="alternarForma(${pkmn.id_num}, parseInt(this.value))" style="padding: 4px 8px; border-radius: 6px; border: 1px solid #cbd5e1; font-weight: bold; cursor: pointer; background: #f8fafc; color: #334155; font-size: 0.85em; outline: none; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                <option value="-1" ${!esMega ? 'selected' : ''}>Forma Normal</option>
+        `;
+        pkmn.megas.forEach((mega, idx) => {
+            const label = mega.forma.includes('X') ? 'Mega X' : (mega.forma.includes('Y') ? 'Mega Y' : 'Mega');
+            htmlMegas += `<option value="${idx}" ${megaIndex === idx ? 'selected' : ''}>${label}</option>`;
+        });
+        htmlMegas += `</select>`;
+    }
 
     // Tipos
-    let htmlTipos = '<div class="tipos-container">';
+    let htmlTipos = '<div class="tipos-container" style="margin: 0 10px;">';
     tipos.forEach(tipo => {
         const tipoEs = TRADUCTOR_TIPOS[tipo] || tipo.toLowerCase();
         htmlTipos += `<img src="https://pokefanaticos.com/pokedex/assets/images/pokemon_tipos/tipo_${tipoEs}.gif" alt="${tipo}" class="tipo-img">`;
     });
-    if (pkmn.tipo_modificado) htmlTipos += '<span class="asterisco-mod">*</span>';
+    if (!esMega && pkmn.tipo_modificado) htmlTipos += '<span class="asterisco-mod">*</span>';
     htmlTipos += '</div>';
 
     // Habilidades
-    const habs = pkmn.habilidades || [];
     let listaHabsHtml = [];
-
     habs.forEach(habRaw => {
-        const habLimpia = habRaw.replace(/\*/g, '').trim();
-        const asteriscos = habRaw.replace(habLimpia, '').trim();
-        
+        const habLimpia = String(habRaw).replace(/\*/g, '').trim();
+        const asteriscos = String(habRaw).replace(habLimpia, '').trim();
         let habMostrar = habLimpia;
         let urlWiki = `https://bulbapedia.bulbagarden.net/wiki/${habLimpia.replace(/ /g, '_')}_(Ability)`;
         
@@ -283,11 +306,7 @@ function generarHTMLTarjeta(pkmn) {
             habMostrar = traduccionesCache[habId] || habLimpia;
             urlWiki = `https://www.wikidex.net/wiki/${habMostrar.replace(/ /g, '_')}`;
         }
-
-        const linkHab = `<a href="${urlWiki}" target="_blank" style="color: inherit; text-decoration: none;">${habMostrar}</a>`;
-        const astHtml = asteriscos ? `<span style='color: #e3350d; font-weight: bold;'>${asteriscos}</span>` : '';
-        
-        listaHabsHtml.push(linkHab + astHtml);
+        listaHabsHtml.push(`<a href="${urlWiki}" target="_blank" style="color: inherit; text-decoration: none;">${habMostrar}</a>${asteriscos ? `<span style='color: #e3350d; font-weight: bold;'>${asteriscos}</span>` : ''}`);
     });
 
     const htmlHabilidades = `
@@ -295,6 +314,17 @@ function generarHTMLTarjeta(pkmn) {
             <strong>${dict.lblHabilidades}:</strong> ${listaHabsHtml.join(', ')}
         </div>
     `;
+
+    // Línea Evolutiva (Oculta en Megas para ahorrar espacio)
+    let htmlEvolucion = '';
+    if (!esMega && pkmn.linea_evolutiva) {
+        const textoEvo = pkmn.linea_evolutiva.replace(/\*/g, '<span style="color: #e3350d; font-weight: bold;">*</span>');
+        htmlEvolucion = `
+            <div style="text-align: center; font-size: 0.85em; margin-bottom: 15px; color: #475569; background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px dashed #cbd5e1;">
+                <strong>🔄 Línea Evolutiva:</strong><br><span style="display: inline-block; margin-top: 5px;">${textoEvo}</span>
+            </div>
+        `;
+    }
 
     // Estadísticas
     const statsKeys = [
@@ -307,41 +337,49 @@ function generarHTMLTarjeta(pkmn) {
     statsKeys.forEach(s => {
         const valor = stats[s.clave] || 0;
         let indicadorDif = "";
-        if (statsModDatos[pkmn.id_num] && statsModDatos[pkmn.id_num][s.clave]) {
+        if (!pkmn.esMega && statsModDatos[pkmn.id_num] && statsModDatos[pkmn.id_num][s.clave]) {
             indicadorDif = ` <span style="font-size: 0.75em; color: #e3350d; font-weight: bold; margin-left: 3px;">(${statsModDatos[pkmn.id_num][s.clave].dif})</span>`;
+        } else if (pkmn.esMega && pkmn.diferencias_stats && pkmn.diferencias_stats[s.clave]) {
+            indicadorDif = ` <span style="font-size: 0.75em; color: #e3350d; font-weight: bold; margin-left: 3px;">(${pkmn.diferencias_stats[s.clave]})</span>`;
         }
-        
         htmlStats += `
             <tr>
                 <td class="stat-name">${s.nombre}</td>
                 <td class="stat-value">${valor}${indicadorDif}</td>
-                <td class="stat-bar-container">
-                    <div class="stat-bar-bg">
-                        <div class="stat-bar-fill" style="width: ${calcBarra(valor)}; ${colorBarra(valor)}"></div>
-                    </div>
-                </td>
+                <td class="stat-bar-container"><div class="stat-bar-bg"><div class="stat-bar-fill" style="width: ${calcBarra(valor)}; ${colorBarra(valor)}"></div></div></td>
             </tr>
         `;
     });
     htmlStats += `<tr><td class="stat-name" style="background-color: #333;">Total</td><td class="stat-value" style="font-size: 1.1em;">${totalStats}</td><td class="stat-bar-container"></td></tr></table>`;
 
     return `
-        <div class="card pokemon-card" data-id="${pkmn.id_num}">
+        <div class="card pokemon-card" id="card-${pkmn.id_num}" data-id="${pkmn.id_num}">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%; margin-bottom: 5px;">
+                ${htmlMegas}
                 ${htmlTipos}
-                <button class="btn-comparar" onclick="abrirComparador(this)" title="Comparar">📊</button>
+                <button class="btn-comparar" onclick="abrirComparador(this, ${megaIndex})" title="Comparar">📊</button>
             </div>
             
             <div style="text-align: center; width: 100%;">
-                <img class="pkmn-img" src="https://pokefanaticos.com/pokedex/assets/images/pokemon_iconos/${pkmn.id_num}.png" alt="${nombre}" loading="lazy" decoding="async" onerror="this.src='https://via.placeholder.com/120'">
+                <img class="pkmn-img" src="${imgSrc}" alt="${nombre}" loading="lazy" decoding="async" style="height: 120px; object-fit: contain;">
                 <h2>#${idStr} ${nombre}</h2>
             </div>
 
             ${htmlHabilidades}
+            ${htmlEvolucion}
             ${htmlStats}
-            ${generarHTMLMovimientos(pkmn.id_str)}
+            ${!esMega ? generarHTMLMovimientos(pkmn.id_str) : ''}
         </div>
     `;
+}
+
+function alternarForma(idNum, megaIndex) {
+    const pkmn = listaPokemonGlobal.find(p => p.id_num === idNum);
+    if (!pkmn) return;
+    const oldCard = document.getElementById(`card-${idNum}`);
+    if (oldCard) {
+        oldCard.outerHTML = generarHTMLTarjeta(pkmn, megaIndex);
+    }
 }
 
 // ==========================================
@@ -374,18 +412,18 @@ window.addEventListener('scroll', () => {
     }
 });
 
-// ==========================================
-// 7. SISTEMA DE FILTRADO UNIFICADO
-// ==========================================
+// 7. SISTEMA DE FILTRADO UNIFICADO -------------------------------------------------------------------------------------------------------------------------------------------------------------
 function aplicarFiltros() {
     const inputGeneral = document.getElementById('busc-general');
     const inputAtaque = document.getElementById('busc-ataque');
+    const inputHabilidad = document.getElementById('busc-habilidad'); // <-- NUEVO
     const chkTipo = document.getElementById('filtro-tipo');
     const chkStats = document.getElementById('filtro-stats');
     const chkHabilidad = document.getElementById('filtro-habilidad');
 
     const terminoGeneral = inputGeneral.value.toLowerCase().trim();
     const terminoAtaque = inputAtaque.value.toLowerCase().trim();
+    const terminoHabilidad = inputHabilidad ? inputHabilidad.value.toLowerCase().trim() : ""; // <-- NUEVO
     const requiereTipo = chkTipo.checked;
     const requiereStats = chkStats.checked;
     const requiereHab = chkHabilidad.checked;
@@ -394,8 +432,10 @@ function aplicarFiltros() {
         const idStr = pkmn.id_str.padStart(3, '0');
         const nombre = (pkmn.nombre || pkmn.nombre_interno || "").toLowerCase();
         
+        // 1. Buscador General
         const coincideGeneral = nombre.includes(terminoGeneral) || idStr.includes(terminoGeneral);
         
+        // 2. Buscador de Ataques
         let coincideAtaque = true;
         if (terminoAtaque !== "") {
             let ataquesStr = "";
@@ -407,16 +447,38 @@ function aplicarFiltros() {
             coincideAtaque = ataquesStr.includes(terminoAtaque);
         }
 
+        // 3. NUEVO: Buscador por Habilidad
+        let coincideHabilidad = true;
+        if (terminoHabilidad !== "") {
+            // Si tiene habilidades, comprobamos si coinciden
+            if (pkmn.habilidades && pkmn.habilidades.length > 0) {
+                coincideHabilidad = pkmn.habilidades.some(habRaw => {
+                    const habLimpia = habRaw.replace(/\*/g, '').trim();
+                    let habMostrar = habLimpia.toLowerCase();
+                    
+                    if (idiomaActual === 'es') {
+                        const habId = habLimpia.toLowerCase().replace(/ /g, '').replace(/-/g, '');
+                        habMostrar = (traduccionesCache[habId] || habLimpia).toLowerCase();
+                    }
+                    return habMostrar.includes(terminoHabilidad);
+                });
+            } else {
+                // Si estamos buscando una habilidad y el Pokémon no tiene, lo ocultamos
+                coincideHabilidad = false; 
+            }
+        }
+
+        // 4. Toggles de Modificaciones
         const cumpleTipo = !requiereTipo || pkmn.tipo_modificado === true;
         const cumpleStats = !requiereStats || pkmn.stats_modificadas === true;
-        
         let habMod = pkmn.habilidad_modificada === true;
         if (!habMod && pkmn.habilidades) {
             habMod = pkmn.habilidades.some(h => String(h).includes('*'));
         }
         const cumpleHab = !requiereHab || habMod === true;
 
-        return coincideGeneral && coincideAtaque && cumpleTipo && cumpleStats && cumpleHab;
+        // Validar todo
+        return coincideGeneral && coincideAtaque && coincideHabilidad && cumpleTipo && cumpleStats && cumpleHab;
     });
 
     renderizarTarjetas(true);
@@ -425,6 +487,7 @@ function aplicarFiltros() {
 function vincularEventosFiltros() {
     document.getElementById('busc-general').addEventListener('input', aplicarFiltros);
     document.getElementById('busc-ataque').addEventListener('input', aplicarFiltros);
+    document.getElementById('busc-habilidad').addEventListener('input', aplicarFiltros);
     document.getElementById('filtro-tipo').addEventListener('change', aplicarFiltros);
     document.getElementById('filtro-stats').addEventListener('change', aplicarFiltros);
     document.getElementById('filtro-habilidad').addEventListener('change', aplicarFiltros);
@@ -433,57 +496,62 @@ function vincularEventosFiltros() {
 // ==========================================
 // 8. LÓGICA DEL COMPARADOR
 // ==========================================
-function abrirComparador(btn) {
-    const idNum = parseInt(btn.closest('.pokemon-card').getAttribute('data-id'));
-    pokemonSeleccionado1 = listaPokemonGlobal.find(p => p.id_num === idNum);
-    
-    const modalBuscador = document.getElementById('modal-buscador-comparador');
-    const input = document.getElementById('input-buscador-comp');
-    
-    input.value = '';
-    filtrarListaComparador('');
-    modalBuscador.style.display = 'flex';
-    setTimeout(() => input.focus(), 100);
-}
-
 function filtrarListaComparador(texto) {
     const query = texto.toLowerCase().trim();
     const contenedor = document.getElementById('lista-opciones-comparador');
     
-    const resultados = listaPokemonGlobal.filter(pkmn => {
-        const nombre = (pkmn.nombre || pkmn.nombre_interno || "").toLowerCase();
-        const idStr = pkmn.id_str.padStart(3, '0');
+    // Generar una lista plana que incluya las formas base Y las megas como entidades separadas
+    let entidadesBuscables = [];
+    listaPokemonGlobal.forEach(pkmn => {
+        entidadesBuscables.push({ ...pkmn, esMega: false, megaIndex: -1, nombreMostrar: pkmn.nombre || pkmn.nombre_interno });
+        if (pkmn.megas) {
+            pkmn.megas.forEach((mega, idx) => {
+                entidadesBuscables.push({ ...pkmn, esMega: true, megaIndex: idx, nombreMostrar: mega.nombre, img_url: mega.img_url });
+            });
+        }
+    });
+
+    const resultados = entidadesBuscables.filter(entidad => {
+        const nombre = (entidad.nombreMostrar || "").toLowerCase();
+        const idStr = entidad.id_str.padStart(3, '0');
         return nombre.includes(query) || idStr.includes(query);
     });
 
     let html = '';
-    resultados.slice(0, 50).forEach(pkmn => {
-        const idStr = pkmn.id_str.padStart(3, '0');
-        const nombreMostrar = pkmn.nombre || (pkmn.nombre_interno ? pkmn.nombre_interno.toUpperCase() : "Desconocido");
-        const imgSrc = `https://pokefanaticos.com/pokedex/assets/images/pokemon_iconos/${pkmn.id_num}.png`;
+    resultados.slice(0, 50).forEach(entidad => {
+        const idStr = entidad.id_str.padStart(3, '0');
+        const imgSrc = entidad.esMega ? entidad.img_url : `https://pokefanaticos.com/pokedex/assets/images/pokemon_iconos/${entidad.id_num}.png`;
         
         html += `
-            <div onclick="ejecutarComparacion(${pkmn.id_num})" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 6px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f8f9fa'">
-                <img src="${imgSrc}" alt="${nombreMostrar}" loading="lazy" decoding="async" style="width: 35px; height: 35px; object-fit: contain;">
-                <span style="font-weight: 600; color: #333;">#${idStr} ${nombreMostrar}</span>
+            <div onclick="ejecutarComparacion(${entidad.id_num}, ${entidad.megaIndex})" style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 6px; cursor: pointer;">
+                <img src="${imgSrc}" alt="${entidad.nombreMostrar}" style="width: 35px; height: 35px; object-fit: contain;">
+                <span style="font-weight: 600; color: #333;">#${idStr} ${entidad.nombreMostrar}</span>
             </div>
         `;
     });
-    
     contenedor.innerHTML = html || '<div style="text-align: center; color: #888; padding: 10px;">No se encontraron resultados</div>';
 }
 
-function ejecutarComparacion(idNum2) {
+// Adaptamos también abrirComparador para recordar la forma exacta
+function abrirComparador(btn, megaIndex = -1) {
+    const idNum = parseInt(btn.closest('.pokemon-card').getAttribute('data-id'));
+    const pkmnBase = listaPokemonGlobal.find(p => p.id_num === idNum);
+    pokemonSeleccionado1 = megaIndex >= 0 ? { ...pkmnBase, ...pkmnBase.megas[megaIndex], esMega: true } : { ...pkmnBase, esMega: false };
+    
+    document.getElementById('input-buscador-comp').value = '';
+    filtrarListaComparador('');
+    document.getElementById('modal-buscador-comparador').style.display = 'flex';
+}
+
+function ejecutarComparacion(idNum2, megaIndex2 = -1) {
     cerrarBuscadorComparador();
-    const pokemon2 = listaPokemonGlobal.find(p => p.id_num === idNum2);
-    if (!pokemon2 || !pokemonSeleccionado1) return;
+    const pkmnBase = listaPokemonGlobal.find(p => p.id_num === idNum2);
+    if (!pkmnBase || !pokemonSeleccionado1) return;
     
-    const col1 = document.getElementById('comp-col-1');
-    const col2 = document.getElementById('comp-col-2');
+    const pokemon2 = megaIndex2 >= 0 ? { ...pkmnBase, ...pkmnBase.megas[megaIndex2], esMega: true } : { ...pkmnBase, esMega: false };
     
-    col1.innerHTML = construirColumnaComparador(pokemonSeleccionado1);
-    col2.innerHTML = construirColumnaComparador(pokemon2);
-    
+    document.getElementById('comp-col-1').innerHTML = construirColumnaComparador(pokemonSeleccionado1);
+    document.getElementById('comp-col-2').innerHTML = construirColumnaComparador(pokemon2);
     document.getElementById('modal-comparador').style.display = 'flex';
 }
 
@@ -495,12 +563,18 @@ function construirColumnaComparador(pkmn) {
     const tipos = pkmn.tipos || [];
     const totalStats = Object.values(stats).reduce((a, b) => a + b, 0);
 
+    // NUEVO: Detectar si es Mega para pintar la URL oficial, o usar el icono local si es Normal
+    const imgSrc = pkmn.esMega 
+        ? pkmn.img_url 
+        : `https://pokefanaticos.com/pokedex/assets/images/pokemon_iconos/${pkmn.id_num}.png`;
+
     let htmlTipos = '<div class="tipos-container" style="justify-content: center; border: none; padding-bottom: 0; margin-bottom: 12px;">';
     tipos.forEach(tipo => {
         const tipoEs = TRADUCTOR_TIPOS[tipo] || tipo.toLowerCase();
         htmlTipos += `<img src="https://pokefanaticos.com/pokedex/assets/images/pokemon_tipos/tipo_${tipoEs}.gif" alt="${tipo}" class="tipo-img" loading="lazy" decoding="async">`;
     });
-    if (pkmn.tipo_modificado) htmlTipos += '<span class="asterisco-mod">*</span>';
+    // Solo mostramos asterisco de tipo si es una forma normal modificada (las megas cambian por naturaleza)
+    if (!pkmn.esMega && pkmn.tipo_modificado) htmlTipos += '<span class="asterisco-mod">*</span>';
     htmlTipos += '</div>';
 
     const statsKeys = [
@@ -512,10 +586,8 @@ function construirColumnaComparador(pkmn) {
     let htmlStats = '<table class="stats-table">';
     statsKeys.forEach(s => {
         const valor = stats[s.clave] || 0;
-        let indicadorDif = "";
-        if (statsModDatos[pkmn.id_num] && statsModDatos[pkmn.id_num][s.clave]) {
-            indicadorDif = ` <span style="font-size: 0.75em; color: #e3350d; font-weight: bold; margin-left: 3px;">(${statsModDatos[pkmn.id_num][s.clave].dif})</span>`;
-        }
+        let indicadorDif = (!pkmn.esMega && statsModDatos[pkmn.id_num] && statsModDatos[pkmn.id_num][s.clave]) 
+            ? ` <span style="font-size: 0.75em; color: #e3350d; font-weight: bold; margin-left: 3px;">(${statsModDatos[pkmn.id_num][s.clave].dif})</span>` : "";
         
         htmlStats += `
             <tr>
@@ -533,7 +605,7 @@ function construirColumnaComparador(pkmn) {
 
     return `
         <div style="text-align: center;">
-            <img src="https://pokefanaticos.com/pokedex/assets/images/pokemon_iconos/${pkmn.id_num}.png" alt="${nombre}" style="width: 110px; height: 110px; object-fit: contain;">
+            <img src="${imgSrc}" alt="${nombre}" style="height: 110px; object-fit: contain;">
             <h3 style="margin: 8px 0 5px 0; color: #333;">#${idStr} ${nombre}</h3>
             ${htmlTipos}
         </div>
@@ -558,7 +630,7 @@ async function alternarIdioma() {
     
     if (idiomaActual === 'en' && Object.keys(learnsetsEN).length === 0) {
         try {
-            const res = await fetch('datos/learnsets_sinking_en.json');
+            const res = await fetch('../datos/learnsets_sinking_en.json');
             learnsetsEN = await res.json();
         } catch (e) {
             console.error("No se pudo cargar el JSON en inglés.");
@@ -569,6 +641,7 @@ async function alternarIdioma() {
 
     document.getElementById('busc-general').placeholder = dict.buscGeneral;
     document.getElementById('busc-ataque').placeholder = dict.buscAtaque;
+    document.getElementById('busc-habilidad').placeholder = dict.buscHab;
     document.querySelector('#filtro-tipo').nextElementSibling.textContent = dict.lblTipo;
     document.querySelector('#filtro-stats').nextElementSibling.textContent = dict.lblStats;
     document.querySelector('#filtro-habilidad').nextElementSibling.textContent = dict.lblHab;
